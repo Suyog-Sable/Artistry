@@ -1,4 +1,46 @@
 import { test, expect } from "@playwright/test";
+
+test("contact links stay usable across navigation breakpoints and keyboard input", async ({ page }) => {
+  const instagramUrl = "https://www.instagram.com/mee_artistry949?psln=MXQxaTAwMWhveXdrZQ==";
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const width of [320, 768, 900, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/shop/two-person-portrait");
+    const mobile = width <= 900;
+    const toggle = page.getByRole("button", { name: "Open navigation" });
+    if (mobile) await toggle.click();
+    const navigation = mobile
+      ? page.getByRole("navigation", { name: "Mobile navigation" })
+      : page.locator(".header");
+    await expect(navigation.getByRole("link", { name: "Explore art", exact: true })).toHaveAttribute("aria-current", "page");
+    const instagram = navigation.getByRole("link", { name: /Artistry on Instagram/ });
+    const whatsapp = navigation.getByRole("link", { name: "Let’s talk", exact: true });
+    await expect(instagram).toBeVisible();
+    await expect(instagram).toHaveAttribute("href", instagramUrl);
+    await expect(whatsapp).toBeVisible();
+    const orderUrl = new URL((await page.locator(".order-action a").getAttribute("href"))!);
+    const contactUrl = new URL((await whatsapp.getAttribute("href"))!);
+    expect(contactUrl.origin).toBe("https://wa.me");
+    expect(contactUrl.pathname).toBe(orderUrl.pathname);
+    expect(contactUrl.searchParams.get("text")).toContain("Hello Artistry!");
+    await expect(whatsapp.locator("svg")).toBeVisible();
+    for (const link of [instagram, whatsapp]) {
+      const box = (await link.boundingBox())!;
+      expect(box.width).toBeGreaterThanOrEqual(44);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+    if (mobile) {
+      await whatsapp.focus();
+      await page.keyboard.press("Escape");
+      await expect(toggle).toBeFocused();
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
+      await toggle.click();
+      await page.setViewportSize({ width: 1200, height: 900 });
+      await expect(page.locator("#mobile-nav")).toHaveCount(0);
+    }
+  }
+});
+
 test("all routes fit mobile and desktop, with no broken images or browser errors", async ({
   page,
 }) => {
@@ -17,9 +59,9 @@ test("all routes fit mobile and desktop, with no broken images or browser errors
     "/shop/handmade-lippan",
     "/shop/god-themed-lippan",
   ];
-  for (const width of [320, 360, 375, 390, 430, 1440]) {
+  for (const width of [320, 360, 375, 390, 430, 768, 820, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const route of width === 320 || width === 390 || width === 1440
+    for (const route of [320, 390, 768, 820, 1024, 1440].includes(width)
       ? routes
       : ["/", "/shop", "/shop/two-person-portrait"]) {
       const response = await page.goto(route);
@@ -122,7 +164,7 @@ test("portrait and Lippan choices produce accurate encoded WhatsApp messages", a
   expect(await message()).toContain("Quote required");
   await expect(page.locator(".price-total")).toContainText("Request a quote");
   expect(await chat.getAttribute("href")).toMatch(
-    /^https:\/\/wa.me\/919000000000\?text=/,
+    /^https:\/\/wa.me\/[1-9]\d{7,14}\?text=/,
   );
   await expect(chat).toHaveAttribute("target", "_blank");
   await page.locator('#notes').evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));

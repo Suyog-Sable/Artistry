@@ -43,23 +43,23 @@ export default function Contact() {
           <span className="eyebrow">A little preparation helps</span>
           <div>
             <Image size={23} aria-hidden="true" />
-            <span>
+            <div>
               <h3>Bring your inspiration</h3>
               <p>
                 Have your reference photos ready to attach directly in WhatsApp.
                 For Lippan art, bring along a colour or design idea.
               </p>
-            </span>
+            </div>
           </div>
           <div>
             <ClipboardCheck size={23} />
-            <span>
+            <div>
               <h3>Let’s confirm the details</h3>
               <p>
                 Ask about frame options, custom requests, payment terms,
                 delivery charges and timelines before ordering.
               </p>
-            </span>
+            </div>
           </div>
           <Link href="/shop" className="text-link">
             Choose an artwork first

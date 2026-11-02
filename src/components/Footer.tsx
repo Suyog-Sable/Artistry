@@ -34,7 +34,7 @@ export function Footer() {
           <div className="footer-chat">
             <span className="eyebrow">A thought. A memory. An idea.</span>
             <p>
-              Every artwork starts
+              Every artwork starts{" "}
               <br />
               with a conversation.
             </p>

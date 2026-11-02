@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Instagram, Menu, X } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
 const instagramUrl =
@@ -28,11 +28,25 @@ const links = [
 ];
 export function Header() {
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const path = usePathname();
+  const isCurrent = (url: string) =>
+    path === url || (url === "/shop" && path.startsWith("/shop/"));
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 901px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
   useEffect(() => {
     if (!open) return;
     const close = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
@@ -54,7 +68,7 @@ export function Header() {
               <Link
                 key={url}
                 href={url}
-                aria-current={path === url ? "page" : undefined}
+                aria-current={isCurrent(url) ? "page" : undefined}
               >
                 {text}
               </Link>
@@ -65,6 +79,8 @@ export function Header() {
             <WhatsAppLink className="header-contact">Let’s talk</WhatsAppLink>
           </div>
           <button
+            ref={toggleRef}
+            type="button"
             className="mobile-toggle"
             aria-expanded={open}
             aria-controls="mobile-nav"
@@ -85,14 +101,17 @@ export function Header() {
                 key={url}
                 href={url}
                 onClick={() => setOpen(false)}
-                aria-current={path === url ? "page" : undefined}
+                aria-current={isCurrent(url) ? "page" : undefined}
               >
                 {text}
               </Link>
             ))}
             <div className="mobile-social-actions">
               <InstagramLink />
-              <WhatsAppLink className="header-contact" onClick={() => setOpen(false)}>
+              <WhatsAppLink
+                className="header-contact"
+                onClick={() => setOpen(false)}
+              >
                 Let’s talk
               </WhatsAppLink>
             </div>

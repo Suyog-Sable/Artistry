@@ -30,10 +30,10 @@ export default function Gallery() {
             >
               <Artwork product={p} priority={i < 2} />
               <div>
-                <span>
+                <div>
                   <small>{p.category}</small>
                   <h2>{p.name}</h2>
-                </span>
+                </div>
               </div>
             </Link>
           ),
