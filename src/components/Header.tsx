@@ -2,7 +2,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Instagram, Menu, X } from "lucide-react";
+import { WhatsAppLink } from "./WhatsAppLink";
+const instagramUrl =
+  "https://www.instagram.com/mee_artistry949?psln=MXQxaTAwMWhveXdrZQ==";
+
+function InstagramLink() {
+  return (
+    <a
+      className="header-instagram"
+      href={instagramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Artistry on Instagram (@mee_artistry949)"
+    >
+      <Instagram size={21} strokeWidth={1.7} aria-hidden="true" />
+    </a>
+  );
+}
 const links = [
   ["Explore art", "/shop"],
   ["The gallery", "/gallery"],
@@ -43,9 +60,10 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <Link href="/contact" className="header-contact">
-            Let’s talk
-          </Link>
+          <div className="header-actions">
+            <InstagramLink />
+            <WhatsAppLink className="header-contact">Let’s talk</WhatsAppLink>
+          </div>
           <button
             className="mobile-toggle"
             aria-expanded={open}
@@ -72,9 +90,12 @@ export function Header() {
                 {text}
               </Link>
             ))}
-            <Link href="/contact" onClick={() => setOpen(false)}>
-              Let’s create something
-            </Link>
+            <div className="mobile-social-actions">
+              <InstagramLink />
+              <WhatsAppLink className="header-contact" onClick={() => setOpen(false)}>
+                Let’s talk
+              </WhatsAppLink>
+            </div>
           </nav>
         )}
       </header>

@@ -6,10 +6,12 @@ export function WhatsAppLink({
   message = generalMessage,
   children = "Let’s talk on WhatsApp",
   className = "button",
+  onClick,
 }: {
   message?: string;
   children?: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   const [notice, setNotice] = useState(false);
   const href = whatsappUrl(message);
@@ -21,6 +23,7 @@ export function WhatsAppLink({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={onClick}
         >
           <WhatsAppIcon />
           <span>{children}</span>

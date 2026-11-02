@@ -184,10 +184,29 @@ p {
   height: 1px;
   background: var(--clay);
 }
+.header-actions,
+.mobile-social-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.header-instagram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  color: var(--clay);
+}
+.header-instagram:hover {
+  color: var(--ink);
+}
 .header-contact {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
+  white-space: nowrap;
   font-size: 14px;
   border-bottom: 1px solid var(--clay);
   min-height: 44px;
@@ -1315,8 +1334,11 @@ p {
     gap: 15px;
     font-size: 14px;
   }
-  .header-contact {
+  .header-actions {
     display: none;
+  }
+  .mobile-social-actions .header-contact {
+    display: flex;
   }
   .hero h1 {
     font-size: 54px;
